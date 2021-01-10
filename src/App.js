@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 const CLIENT_ID = '9137d43268b8e5dfdd48';
 const REDIRECT_URI = 'http://localhost:3000';
 const LOGIN_URL = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
 
 const useCode = () => {
+  const [code, setCode] = useState();
   const url = window.location.href;
-  const re = /[&?]code=(?<code>[a-z0-9]*)/;
-  const m = url.match(re);
-  return m && m.groups.code;
+
+  useEffect(() => {
+    const re = /[&?]code=(?<code>[a-z0-9]*)/;
+    const m = url.match(re);
+    if (m) {
+      window.history.replaceState('', '', url.replace(re, ''));
+      setCode(m.groups.code);
+    }
+  }, [url]);
+
+  return code;
+};
 };
 
 const App = () => {
