@@ -39,6 +39,26 @@ const useUserInfo = (code) => {
   return userInfo;
 };
 
+const UserInfo = ({ userInfo }) => {
+  if (userInfo.token) {
+    return (
+      <p>
+        User is logged in. Welcome, {userInfo.name}, email {userInfo.email}
+      </p>
+    );
+  }
+
+  if (userInfo.error) {
+    return (
+      <p>
+        Failed to log in, error {userInfo.error}: {userInfo.error_description}
+      </p>
+    );
+  }
+
+  return <p>User is not logged in. Press link to log in.</p>;
+};
+
 const App = () => {
   const code = useCode();
 
