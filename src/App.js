@@ -61,6 +61,7 @@ const UserInfo = ({ userInfo }) => {
 
 const App = () => {
   const code = useCode();
+  const userInfo = useUserInfo(code);
 
   return (
     <div>
@@ -70,6 +71,8 @@ const App = () => {
       </p>
       <a href={LOGIN_URL}>Login using GitHub</a>
       <p>This is the code which you get from GitHub: {code}</p>
+      <hr />
+      <UserInfo userInfo={userInfo} />
     </div>
   );
 };
