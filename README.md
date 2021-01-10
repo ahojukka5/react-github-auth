@@ -67,3 +67,52 @@ as a registration process.
 
 [2]: https://docs.github.com/en/free-pro-team@latest/developers/apps/scopes-for-oauth-apps
 
+## Implementation
+
+In order to work, this authentication needs server side implementation, that
+takes care of storing client secret. I did mine with Go:
+<https://github.com/ahojukka5/github-auth-server>
+
+After web browser returns from GitHub, code needs to be parsed from redirect
+url. In my implementation, this part is done by a custom hook `useCode`:
+
+```js
+const useCode = () => {
+  const [code, setCode] = useState();
+  const url = window.location.href;
+
+  useEffect(() => {
+    const re = /[&?]code=(?<code>[a-z0-9]*)/;
+    const m = url.match(re);
+    if (m) {
+      window.history.replaceState('', '', url.replace(re, ''));
+      setCode(m.groups.code);
+    }
+  }, [url]);
+
+  return code;
+};
+```
+
+When code is known, next we need to send it to backend. This is done in
+`useUserInfo` custom hook:
+
+```js
+const useUserInfo = (code) => {
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    code &&
+      fetch(`${AUTH_URL}?code=${code}`)
+        .then((data) => data.json())
+        .then((data) => {
+          setUserInfo(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [code]);
+
+  return userInfo;
+};
+```
