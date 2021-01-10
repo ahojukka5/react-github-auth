@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 const CLIENT_ID = '9137d43268b8e5dfdd48';
 const REDIRECT_URI = 'http://localhost:3000';
 const LOGIN_URL = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}`;
+const AUTH_URL = 'http://localhost:8080/authenticate/github';
 
 const useCode = () => {
   const [code, setCode] = useState();
@@ -19,6 +20,23 @@ const useCode = () => {
 
   return code;
 };
+
+const useUserInfo = (code) => {
+  const [userInfo, setUserInfo] = useState({});
+
+  useEffect(() => {
+    code &&
+      fetch(`${AUTH_URL}?code=${code}`)
+        .then((data) => data.json())
+        .then((data) => {
+          setUserInfo(data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+  }, [code]);
+
+  return userInfo;
 };
 
 const App = () => {
